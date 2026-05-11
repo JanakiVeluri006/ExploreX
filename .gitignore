@@ -1,0 +1,28 @@
+# Flutter
+.dart_tool/
+.packages
+.pub/
+build/
+
+# Android
+android/.gradle/
+android/app/build/
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/
+
+# VSCode
+.vscode/
+
+# IntelliJ
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Environment
+.env
