@@ -10,7 +10,9 @@ from controllers.trip_controller import (
     update_trip,
     delete_trip,
     toggle_favorite,
-    search_trips
+    search_trips,
+    toggle_planned,
+    fix_planned
 )
 
 trip_bp = Blueprint('trip_bp', __name__)
@@ -79,17 +81,9 @@ def fix_favorites():
 
 # 📌 FIX OLD PLANNED FIELD
 @trip_bp.route('/fix-planned', methods=['GET'])
-def fix_planned():
-
-    db["trips"].update_many(
-        {"isPlanned": {"$exists": False}},
-        {"$set": {"isPlanned": False}}
-    )
-
-    return {
-        "success": True,
-        "message": "Planned field added to old trips"
-    }
+def fix_planned_route():
+    response, status = fix_planned()
+    return jsonify(response), status
 
 @trip_bp.route('/search-trips', methods=['GET'])
 def search_trips_route():
@@ -99,37 +93,7 @@ def search_trips_route():
 
 # 📌 TOGGLE FUTURE TRIP
 @trip_bp.route('/toggle-planned/<id>', methods=['POST'])
-def toggle_planned(id):
+def toggle_planned_route(id):
+    response, status = toggle_planned(id)
+    return jsonify(response), status
 
-    try:
-        obj_id = ObjectId(id)
-    except:
-        return jsonify({
-            "success": False,
-            "message": "Invalid ID"
-        }), 400
-
-    trip = db["trips"].find_one({"_id": obj_id})
-
-    if not trip:
-        return jsonify({
-            "success": False,
-            "message": "Trip not found"
-        }), 404
-
-    current_value = trip.get("isPlanned", False)
-
-    db["trips"].update_one(
-        {"_id": obj_id},
-        {
-            "$set": {
-                "isPlanned": not current_value
-            }
-        }
-    )
-
-    return jsonify({
-        "success": True,
-        "message": "Planned status updated",
-        "isPlanned": not current_value
-    }), 200
