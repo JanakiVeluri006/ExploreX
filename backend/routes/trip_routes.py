@@ -55,7 +55,7 @@ def delete_trip_route():
 def toggle_favorite_route(id):
     response, status = toggle_favorite(id)
     return jsonify(response), status
-
+'''
 # 🔧 OPTIONAL FIX (for old data)
 @trip_bp.route('/fix-images', methods=['GET'])
 def fix_images():
@@ -64,7 +64,8 @@ def fix_images():
         {"$set": {"image": ""}}
     )
     return {"message": "Fixed all trips"}
-
+'''
+'''
 # ❤️ FIX OLD FAVORITES FIELD
 @trip_bp.route('/fix-favorites', methods=['GET'])
 def fix_favorites():
@@ -77,14 +78,14 @@ def fix_favorites():
         "success": True,
         "message": "Favorites field added to old trips"
     }
-
+'''
 
 # 📌 FIX OLD PLANNED FIELD
-@trip_bp.route('/fix-planned', methods=['GET'])
+'''@trip_bp.route('/fix-planned', methods=['GET'])
 def fix_planned_route():
     response, status = fix_planned()
     return jsonify(response), status
-
+'''
 @trip_bp.route('/search-trips', methods=['GET'])
 def search_trips_route():
     query = request.args.get('q', '')
