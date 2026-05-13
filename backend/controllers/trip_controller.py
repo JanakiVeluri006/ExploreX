@@ -1,7 +1,6 @@
 from config.db import db
 from bson import ObjectId
 
-
 def create_trip(data):
 
     title = data.get("title")

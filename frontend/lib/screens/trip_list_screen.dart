@@ -5,6 +5,7 @@ import '../services/trip_service.dart';
 import 'trip_details_screen.dart';
 import 'add_trip_screen.dart';
 import '../theme/app_colors.dart';
+import '../services/auth/auth_service.dart';
 
 class TripListPage extends StatefulWidget {
   const TripListPage({super.key});
@@ -123,7 +124,7 @@ Widget buildCategoryChip(String label) {
               end: Alignment.bottomRight,
             ),
           ),
-          child: const SafeArea(
+          child: SafeArea(
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Row(
@@ -138,10 +139,24 @@ Widget buildCategoryChip(String label) {
                            style: AppTextStyles.lightSubtitle),
                     ],
                   ),
-                  CircleAvatar(
-                    backgroundColor: Colors.white24,
-                    child: Icon(Icons.person, color: Colors.white),
-                  )
+
+                  PopupMenuButton<String>(
+                    icon: const CircleAvatar(
+                      backgroundColor: Colors.white24,
+                      child: Icon(Icons.person, color: Colors.white),
+                    ),
+                    onSelected: (value) async {
+                      if (value == "logout") {
+                        await AuthService.logoutUser();
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: "logout",
+                        child: Text("Logout"),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
