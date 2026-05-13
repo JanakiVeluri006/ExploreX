@@ -52,7 +52,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDaoLAC3yD3OcqTdZjAEKjPeVZJUEyJ2P4',
+<<<<<<< HEAD
     appId: '1:156858555530:android:ef86813bd45ec623cee173',
+=======
+    appId: '1:156858555530:android:11f2b9a184d4787ecee173',
+>>>>>>> backend-dev
     messagingSenderId: '156858555530',
     projectId: 'explorex-2026',
     storageBucket: 'explorex-2026.firebasestorage.app',
@@ -85,5 +89,9 @@ class DefaultFirebaseOptions {
     storageBucket: 'explorex-2026.firebasestorage.app',
     measurementId: 'G-PZ77D1QTSE',
   );
+<<<<<<< HEAD
 
 }
+=======
+}
+>>>>>>> backend-dev

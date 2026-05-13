@@ -7,6 +7,28 @@
   "client": [
     {
       "client_info": {
+<<<<<<< HEAD
+=======
+        "mobilesdk_app_id": "1:156858555530:android:11f2b9a184d4787ecee173",
+        "android_client_info": {
+          "package_name": "com.example.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaoLAC3yD3OcqTdZjAEKjPeVZJUEyJ2P4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+>>>>>>> backend-dev
         "mobilesdk_app_id": "1:156858555530:android:ef86813bd45ec623cee173",
         "android_client_info": {
           "package_name": "com.explorex.travel"

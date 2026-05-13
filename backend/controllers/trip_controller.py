@@ -1,7 +1,6 @@
 from config.db import db
 from bson import ObjectId
 
-
 def create_trip(data):
 
     title = data.get("title")
@@ -187,4 +186,51 @@ def search_trips(query):
     return {
         "success": True,
         "data": results
+    }, 200
+
+def toggle_planned(id):
+
+    try:
+        obj_id = ObjectId(id)
+    except:
+        return {
+            "success": False,
+            "message": "Invalid ID"
+        }, 400
+
+    trip = db["trips"].find_one({"_id": obj_id})
+
+    if not trip:
+        return {
+            "success": False,
+            "message": "Trip not found"
+        }, 404
+
+    current_value = trip.get("isPlanned", False)
+
+    db["trips"].update_one(
+        {"_id": obj_id},
+        {
+            "$set": {
+                "isPlanned": not current_value
+            }
+        }
+    )
+
+    return {
+        "success": True,
+        "message": "Planned status updated",
+        "isPlanned": not current_value
+    }, 200
+
+def fix_planned():
+
+    db["trips"].update_many(
+        {"isPlanned": {"$exists": False}},
+        {"$set": {"isPlanned": False}}
+    )
+
+    return {
+        "success": True,
+        "message": "Planned field added to old trips"
     }, 200
