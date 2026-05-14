@@ -36,14 +36,18 @@ def create_trip(data):
         "id": str(result.inserted_id)
     }, 201
 
-def get_all_trips():
 
+def get_all_trips(user_id):
     trips = []
-
+    favorite_trip_ids = []
+    favorites = db["favorites"].find({"user_id": user_id})
+    for favorite in favorites:
+        favorite_trip_ids.append(favorite["trip_id"])
     for trip in db["trips"].find():
         trip["_id"] = str(trip["_id"])
         trip["id"] = trip["_id"]
         trips.append(trip)
+        trip["isFavorite"] = (str(trip["_id"]) in favorite_trip_ids)
 
     return {
         "success": True,

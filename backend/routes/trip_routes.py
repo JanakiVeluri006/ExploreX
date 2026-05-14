@@ -27,7 +27,8 @@ def create_trip_route():
 # 📥 GET ALL TRIPS
 @trip_bp.route('/get-trips', methods=['GET'])
 def get_trips():
-    response, status = get_all_trips()
+    user_id = request.args.get("user_id")
+    response, status = get_all_trips(user_id)
     return jsonify(response), status
 
 # 🔍 GET SINGLE TRIP
