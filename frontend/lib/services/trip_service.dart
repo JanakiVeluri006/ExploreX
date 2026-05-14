@@ -8,9 +8,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 class TripService {
   static const String baseUrl = "http://localhost:5000";
   static Future<List> getTrips() async {
-    final response =
-        await http.get(Uri.parse('http://localhost:5000/get-trips'));
-
+    final user = FirebaseAuth.instance.currentUser;
+    final response = await http.get( Uri.parse("http://localhost:5000/get-trips?user_id=${user?.uid}"));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       return data["data"] ?? [];
@@ -84,6 +83,7 @@ static Future<bool> deleteTrip(String id) async {
   }
 }
 
+// 🔍 Search trips
 static Future<List> searchTrips(String query) async {
   try {
     final response = await http.get(
@@ -101,6 +101,7 @@ static Future<List> searchTrips(String query) async {
   return [];
 }
 
+// ❤️ Toggle favorite
 static Future<bool> toggleFavorite(String tripId) async {
 
   try {
@@ -141,8 +142,8 @@ static Future<bool> toggleFavorite(String tripId) async {
   }
 }
 
-static Future<bool>
-togglePlanned(String id) async {
+// 📅 Toggle planned
+static Future<bool> togglePlanned(String id) async {
 
   try {
 
