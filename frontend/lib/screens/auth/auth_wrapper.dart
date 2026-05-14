@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-<<<<<<< HEAD
-
-=======
->>>>>>> backend-dev
+import '../../services/auth/auth_service.dart';
+import 'login_screen.dart';
 import '../trip_list_screen.dart';
 import 'register_screen.dart';
 
