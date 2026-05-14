@@ -1,7 +1,7 @@
 from config.db import db
 from bson import ObjectId
 
-
+# ❤️ FAVORITE CONTROLLER
 def toggle_favorite(data):
 
     user_id = data.get("user_id")
@@ -44,7 +44,7 @@ def toggle_favorite(data):
         "isFavorite": True
     }, 201
 
-
+# GET USER FAVORITES
 def get_user_favorites(user_id):
 
     favorites = db["favorites"].find({

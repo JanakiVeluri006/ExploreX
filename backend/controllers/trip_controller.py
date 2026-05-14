@@ -36,7 +36,6 @@ def create_trip(data):
         "id": str(result.inserted_id)
     }, 201
 
-
 def get_all_trips(user_id):
     trips = []
     favorite_trip_ids = []
@@ -230,16 +229,4 @@ def toggle_planned(id):
         "success": True,
         "message": "Planned status updated",
         "isPlanned": not current_value
-    }, 200
-
-def fix_planned():
-
-    db["trips"].update_many(
-        {"isPlanned": {"$exists": False}},
-        {"$set": {"isPlanned": False}}
-    )
-
-    return {
-        "success": True,
-        "message": "Planned field added to old trips"
     }, 200
