@@ -43,11 +43,16 @@ def get_all_trips(user_id):
     favorites = db["favorites"].find({"user_id": user_id})
     for favorite in favorites:
         favorite_trip_ids.append(favorite["trip_id"])
+    planned_trip_ids = []
+    planned = db["planned_trips"].find({"user_id": user_id})
+    for item in planned:
+        planned_trip_ids.append(item["trip_id"])
     for trip in db["trips"].find():
         trip["_id"] = str(trip["_id"])
         trip["id"] = trip["_id"]
         trips.append(trip)
         trip["isFavorite"] = (str(trip["_id"]) in favorite_trip_ids)
+        trip["isPlanned"] = (str(trip["_id"]) in planned_trip_ids)
 
     return {
         "success": True,
