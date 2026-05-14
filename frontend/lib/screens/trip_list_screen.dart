@@ -298,8 +298,13 @@ Widget buildCategoryChip(String label) {
                               isFavorite: trip["isFavorite"] == true,
                               isPlanned: trip["isPlanned"] == true,
 
-                              onFavoriteToggle: () =>
-                                  toggleFavorite(trip["id"]),
+                              onFavoriteToggle: () async {
+                                final isFavorite =
+                                    await TripService.toggleFavorite(trip["id"]);
+                                    setState(() {
+                                    trip["isFavorite"] = isFavorite;
+                                    });
+                                },
                               onPlannedToggle: () =>
                                   togglePlanned(trip["id"]),
 

@@ -3,8 +3,10 @@
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TripService {
+  static const String baseUrl = "http://localhost:5000";
   static Future<List> getTrips() async {
     final response =
         await http.get(Uri.parse('http://localhost:5000/get-trips'));
@@ -99,22 +101,42 @@ static Future<List> searchTrips(String query) async {
   return [];
 }
 
-static Future<bool>
-toggleFavorite(String id) async {
+static Future<bool> toggleFavorite(String tripId) async {
 
   try {
 
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return false;
+
     final response = await http.post(
-      Uri.parse(
-        "http://localhost:5000/toggle-favorite/$id",
-      ),
+
+      Uri.parse("$baseUrl/toggle-favorite"),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: jsonEncode({
+
+        "user_id": user.uid,
+        "trip_id": tripId,
+      }),
     );
 
-    return response.statusCode == 200;
+    if (response.statusCode == 200 ||
+        response.statusCode == 201) {
+
+      final data = jsonDecode(response.body);
+
+      return data["isFavorite"];
+    }
+
+    return false;
 
   } catch (e) {
 
-    print("FAVORITE ERROR: $e");
+    print("TOGGLE FAVORITE ERROR: $e");
     return false;
   }
 }
