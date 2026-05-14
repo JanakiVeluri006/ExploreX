@@ -6,6 +6,7 @@ import 'trip_details_screen.dart';
 import 'add_trip_screen.dart';
 import '../theme/app_colors.dart';
 import '../services/auth/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TripListPage extends StatefulWidget {
   const TripListPage({super.key});
@@ -150,12 +151,25 @@ Widget buildCategoryChip(String label) {
                         await AuthService.logoutUser();
                       }
                     },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: "logout",
-                        child: Text("Logout"),
-                      ),
-                    ],
+                    itemBuilder: (context) {
+                      final user = FirebaseAuth.instance.currentUser;
+                      return [
+                        PopupMenuItem(
+                          enabled: false,
+                          child: Text(
+                            user?.email ?? "No Email",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const PopupMenuDivider(),
+                        const PopupMenuItem(
+                          value: "logout",
+                          child: Text("Logout"),
+                        ),
+                      ];
+                    },
                   ),
                 ],
               ),
@@ -305,11 +319,15 @@ Widget buildCategoryChip(String label) {
                                     trip["isFavorite"] = isFavorite;
                                     });
                                 },
-                              onPlannedToggle: () =>
-                                  togglePlanned(trip["id"]),
+                              onPlannedToggle: () async {
+                                final isPlanned =
+                                    await TripService.togglePlanned(trip["id"]);
+                                    setState(() {
+                                      trip["isPlanned"] = isPlanned;
+                                    });
+                                },
 
                               onTap: () async {
-
                                 final tripId =
                                     (trip["id"] ?? trip["_id"]).toString();
 

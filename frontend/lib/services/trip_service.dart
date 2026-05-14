@@ -14,10 +14,10 @@ class TripService {
       final data = json.decode(response.body);
       return data["data"] ?? [];
     }
-
     return [];
   }
 
+// ✏️ Create trip
   static Future<bool> createTrip(Map data) async {
   try {
     final response = await http.post(
@@ -25,7 +25,6 @@ class TripService {
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(data),
     );
-
     return response.statusCode == 201;
   } catch (e) {
     print("SERVICE CREATE ERROR: $e");
@@ -33,6 +32,7 @@ class TripService {
   }
 }
 
+// ✏️ Update trip
 static Future<bool> updateTrip(Map data) async {
   try {
     final response = await http.post(
@@ -40,7 +40,6 @@ static Future<bool> updateTrip(Map data) async {
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(data),
     );
-
     return response.statusCode == 200;
   } catch (e) {
     print("UPDATE SERVICE ERROR: $e");
@@ -54,7 +53,6 @@ static Future<Map<String, dynamic>?> getTrip(String id) async {
     final response = await http.get(
       Uri.parse("http://localhost:5000/get-trip/$id"),
     );
-
     if (response.statusCode == 200) {
       return Map<String, dynamic>.from(
         jsonDecode(response.body),
@@ -63,7 +61,6 @@ static Future<Map<String, dynamic>?> getTrip(String id) async {
   } catch (e) {
     print("GET TRIP ERROR: $e");
   }
-
   return null;
 }
 
@@ -75,7 +72,6 @@ static Future<bool> deleteTrip(String id) async {
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"id": id}),
     );
-
     return response.statusCode == 200;
   } catch (e) {
     print("DELETE SERVICE ERROR: $e");
@@ -89,7 +85,6 @@ static Future<List> searchTrips(String query) async {
     final response = await http.get(
       Uri.parse("http://localhost:5000/search-trips?q=$query"),
     );
-
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return data["data"] ?? [];
@@ -97,67 +92,59 @@ static Future<List> searchTrips(String query) async {
   } catch (e) {
     print("SEARCH ERROR: $e");
   }
-
   return [];
 }
 
 // ❤️ Toggle favorite
 static Future<bool> toggleFavorite(String tripId) async {
-
   try {
-
     final user = FirebaseAuth.instance.currentUser;
-
     if (user == null) return false;
-
     final response = await http.post(
-
       Uri.parse("$baseUrl/toggle-favorite"),
-
       headers: {
         "Content-Type": "application/json",
       },
-
       body: jsonEncode({
-
         "user_id": user.uid,
         "trip_id": tripId,
       }),
     );
-
     if (response.statusCode == 200 ||
         response.statusCode == 201) {
-
       final data = jsonDecode(response.body);
-
       return data["isFavorite"];
     }
-
     return false;
-
   } catch (e) {
-
     print("TOGGLE FAVORITE ERROR: $e");
     return false;
   }
 }
 
 // 📅 Toggle planned
-static Future<bool> togglePlanned(String id) async {
-
+static Future<bool> togglePlanned(String tripId) async {
   try {
-
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return false;
     final response = await http.post(
-      Uri.parse(
-        "http://localhost:5000/toggle-planned/$id",
-      ),
+      Uri.parse("$baseUrl/toggle-planned"),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "user_id": user.uid,
+        "trip_id": tripId,
+      }),
     );
-
-    return response.statusCode == 200;
-
+    if (response.statusCode == 200 ||
+        response.statusCode == 201) {
+      final data = jsonDecode(response.body);
+      return data["isPlanned"];
+    }
+    return false;
   } catch (e) {
-
-    print("PLANNED ERROR: $e");
+    print("TOGGLE PLANNED ERROR: $e");
     return false;
   }
 }
