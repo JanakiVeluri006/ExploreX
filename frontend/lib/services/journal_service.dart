@@ -34,8 +34,7 @@ class JournalService {
   }
 
   // 📖 Get Trip Journals
-  static Future<List<dynamic>>
-      getTripJournals(String tripId) async {
+  static Future<List<dynamic>> getTripJournals(String tripId) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return [];
@@ -52,6 +51,24 @@ class JournalService {
       return [];
     } catch (e) {
       print("GET JOURNALS ERROR: $e");
+      return [];
+    }
+  }
+
+  // 📚 Get all journals of user
+static Future<List<dynamic>> getUserJournals() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return [];
+      final response = await http.get(
+        Uri.parse("$baseUrl/get-journals/${user.uid}"));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data["data"];
+      }
+      return [];
+    } catch (e) {
+      print("GET USER JOURNALS ERROR: $e");
       return [];
     }
   }
