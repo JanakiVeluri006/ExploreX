@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'edit_trip_screen.dart';
 import '../services/trip_service.dart';
 import '../theme/app_colors.dart'; 
+import 'journal_screen.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   final String tripId;
@@ -500,6 +501,28 @@ Future<void> togglePlanned() async {
                       ),
                     ),
                   ],
+                  
+                  const SizedBox(height: 20),
+
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => JournalScreen(
+                                  tripId: trip!["id"],
+                                  tripTitle: trip!["title"],
+                                ),
+                              ),
+                            );
+                          },
+
+                          icon: const Icon(Icons.menu_book),
+
+                          label: const Text(
+                            "Travel Memory Book",
+                          ),
+                        ),
                 ],
               ),
             ),

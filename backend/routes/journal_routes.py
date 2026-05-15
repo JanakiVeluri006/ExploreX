@@ -21,13 +21,11 @@ def get_user_journals_route(user_id):
     return jsonify(response), status
 
 # Get journals for a specific trip
-@journal_bp.route(
-    '/get-trip-journals/<user_id>/<trip_id>',
-    methods=['GET']
-)
+@journal_bp.route('/get-trip-journals/<user_id>/<trip_id>', methods=['GET'])
 def get_trip_journals_route(user_id, trip_id):
     response, status = get_trip_journals(
         user_id,
         trip_id
     )
     return jsonify(response), status
+
