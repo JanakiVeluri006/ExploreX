@@ -1,12 +1,20 @@
 from config.db import db
 from bson import ObjectId
+from datetime import datetime
+from services.category_service import detect_category
 
+<<<<<<< HEAD
+=======
+# ➕ CREATE TRIP
+>>>>>>> ac294aacf9a6a94ec24cc4fcc3b4354a449115d9
 def create_trip(data):
 
     title = data.get("title")
     location = data.get("location")
     days = data.get("days")
     image = data.get("image", "")
+    description = data.get("description", "")
+    category = detect_category(location)
 
     if not title or not location or days is None:
         return {
@@ -27,7 +35,11 @@ def create_trip(data):
         "location": location,
         "days": days,
         "image": image,
-        "isFavorite": False
+        "description": description,
+        "category": category,
+        "isFavorite": False,
+        "isPlanned": False,
+        "created_at": datetime.now()
     })
 
     return {
@@ -36,7 +48,14 @@ def create_trip(data):
         "id": str(result.inserted_id)
     }, 201
 
+<<<<<<< HEAD
 def get_all_trips(user_id):
+=======
+
+# 📥 GET ALL TRIPS
+def get_all_trips():
+
+>>>>>>> ac294aacf9a6a94ec24cc4fcc3b4354a449115d9
     trips = []
     favorite_trip_ids = []
     favorites = db["favorites"].find({"user_id": user_id})
@@ -47,8 +66,10 @@ def get_all_trips(user_id):
     for item in planned:
         planned_trip_ids.append(item["trip_id"])
     for trip in db["trips"].find():
+
         trip["_id"] = str(trip["_id"])
         trip["id"] = trip["_id"]
+
         trips.append(trip)
         trip["isFavorite"] = (str(trip["_id"]) in favorite_trip_ids)
         trip["isPlanned"] = (str(trip["_id"]) in planned_trip_ids)
@@ -58,6 +79,8 @@ def get_all_trips(user_id):
         "data": trips
     }, 200
 
+
+# 🔍 GET SINGLE TRIP
 def get_single_trip(id):
 
     try:
@@ -81,6 +104,8 @@ def get_single_trip(id):
 
     return trip, 200
 
+
+# ✏️ UPDATE TRIP
 def update_trip(data):
 
     trip_id = data.get("id")
@@ -114,7 +139,10 @@ def update_trip(data):
         "message": "Trip updated successfully"
     }, 200
 
+
+# 🗑 DELETE TRIP
 def delete_trip(data):
+
     trip_id = data.get("id")
 
     if not trip_id:
@@ -138,6 +166,8 @@ def delete_trip(data):
         "message": "Trip deleted successfully"
     }, 200
 
+
+# ❤️ TOGGLE FAVORITE
 def toggle_favorite(id):
 
     try:
@@ -173,29 +203,8 @@ def toggle_favorite(id):
         "isFavorite": not current_value
     }, 200
 
-def search_trips(query):
 
-    query = query.lower()
-
-    results = []
-
-    for trip in db["trips"].find():
-
-        title = trip.get("title", "").lower()
-        location = trip.get("location", "").lower()
-
-        if query in title or query in location:
-
-            trip["_id"] = str(trip["_id"])
-            trip["id"] = trip["_id"]
-
-            results.append(trip)
-
-    return {
-        "success": True,
-        "data": results
-    }, 200
-
+# 📌 TOGGLE PLANNED
 def toggle_planned(id):
 
     try:
@@ -229,4 +238,124 @@ def toggle_planned(id):
         "success": True,
         "message": "Planned status updated",
         "isPlanned": not current_value
+    }, 200
+
+
+# 🔍 SEARCH TRIPS
+def search_trips(query):
+
+    query = query.lower()
+
+    results = []
+
+    for trip in db["trips"].find():
+
+        title = trip.get("title", "").lower()
+        location = trip.get("location", "").lower()
+
+        if query in title or query in location:
+
+            trip["_id"] = str(trip["_id"])
+            trip["id"] = trip["_id"]
+
+            results.append(trip)
+
+    return {
+        "success": True,
+        "data": results
+    }, 200
+
+<<<<<<< HEAD
+def toggle_planned(id):
+
+    try:
+        obj_id = ObjectId(id)
+    except:
+        return {
+            "success": False,
+            "message": "Invalid ID"
+        }, 400
+
+    trip = db["trips"].find_one({"_id": obj_id})
+
+    if not trip:
+        return {
+            "success": False,
+            "message": "Trip not found"
+        }, 404
+
+    current_value = trip.get("isPlanned", False)
+
+    db["trips"].update_one(
+        {"_id": obj_id},
+        {
+            "$set": {
+                "isPlanned": not current_value
+            }
+        }
+=======
+
+# 🔧 FIX OLD IMAGE FIELD
+def fix_images_data():
+
+    db["trips"].update_many(
+        {"image": {"$exists": False}},
+        {"$set": {"image": ""}}
+>>>>>>> ac294aacf9a6a94ec24cc4fcc3b4354a449115d9
+    )
+
+    return {
+        "success": True,
+<<<<<<< HEAD
+        "message": "Planned status updated",
+        "isPlanned": not current_value
+=======
+        "message": "Images fixed successfully"
+    }, 200
+
+
+# ❤️ FIX OLD FAVORITES FIELD
+def fix_favorites_data():
+
+    db["trips"].update_many(
+        {"isFavorite": {"$exists": False}},
+        {"$set": {"isFavorite": False}}
+    )
+
+    return {
+        "success": True,
+        "message": "Favorites fixed successfully"
+    }, 200
+
+
+# 📌 FIX OLD PLANNED FIELD
+def fix_planned_data():
+
+    db["trips"].update_many(
+        {"isPlanned": {"$exists": False}},
+        {"$set": {"isPlanned": False}}
+    )
+
+    return {
+        "success": True,
+        "message": "Planned trips fixed successfully"
+    }, 200
+# 🌍 GET TRIPS BY CATEGORY
+def get_trips_by_category(category_name):
+
+    trips = []
+
+    for trip in db["trips"].find({
+        "category": category_name
+    }):
+
+        trip["_id"] = str(trip["_id"])
+        trip["id"] = trip["_id"]
+
+        trips.append(trip)
+
+    return {
+        "success": True,
+        "data": trips
+>>>>>>> ac294aacf9a6a94ec24cc4fcc3b4354a449115d9
     }, 200
