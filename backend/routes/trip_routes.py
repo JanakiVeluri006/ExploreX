@@ -1,8 +1,4 @@
-from datetime import datetime
 from flask import Blueprint, request, jsonify
-from config.db import db
-from bson import ObjectId
-
 from controllers.trip_controller import (
     create_trip,
     get_all_trips,
@@ -10,7 +6,12 @@ from controllers.trip_controller import (
     update_trip,
     delete_trip,
     toggle_favorite,
-    search_trips
+    toggle_planned,
+    search_trips,
+    fix_images_data,
+    fix_favorites_data,
+    fix_planned_data,
+    get_trips_by_category
 )
 
 trip_bp = Blueprint('trip_bp', __name__)
@@ -22,17 +23,20 @@ def create_trip_route():
     response, status = create_trip(data)
     return jsonify(response), status
 
+
 # 📥 GET ALL TRIPS
 @trip_bp.route('/get-trips', methods=['GET'])
-def get_trips():
+def get_trips_route():
     response, status = get_all_trips()
     return jsonify(response), status
 
+
 # 🔍 GET SINGLE TRIP
 @trip_bp.route('/get-trip/<id>', methods=['GET'])
-def get_trip(id):
+def get_trip_route(id):
     response, status = get_single_trip(id)
     return jsonify(response), status
+
 
 # ✏️ UPDATE TRIP
 @trip_bp.route('/update-trip', methods=['POST'])
@@ -41,6 +45,7 @@ def update_trip_route():
     response, status = update_trip(data)
     return jsonify(response), status
 
+
 # 🗑 DELETE TRIP
 @trip_bp.route('/delete-trip', methods=['POST'])
 def delete_trip_route():
@@ -48,88 +53,53 @@ def delete_trip_route():
     response, status = delete_trip(data)
     return jsonify(response), status
 
+
 # ❤️ TOGGLE FAVORITE
 @trip_bp.route('/toggle-favorite/<id>', methods=['POST'])
 def toggle_favorite_route(id):
     response, status = toggle_favorite(id)
     return jsonify(response), status
 
-# 🔧 OPTIONAL FIX (for old data)
-@trip_bp.route('/fix-images', methods=['GET'])
-def fix_images():
-    db["trips"].update_many(
-        {"image": {"$exists": False}},
-        {"$set": {"image": ""}}
-    )
-    return {"message": "Fixed all trips"}
 
-# ❤️ FIX OLD FAVORITES FIELD
-@trip_bp.route('/fix-favorites', methods=['GET'])
-def fix_favorites():
-    db["trips"].update_many(
-        {"isFavorite": {"$exists": False}},
-        {"$set": {"isFavorite": False}}
-    )
-
-    return {
-        "success": True,
-        "message": "Favorites field added to old trips"
-    }
+# 📌 TOGGLE PLANNED
+@trip_bp.route('/toggle-planned/<id>', methods=['POST'])
+def toggle_planned_route(id):
+    response, status = toggle_planned(id)
+    return jsonify(response), status
 
 
-# 📌 FIX OLD PLANNED FIELD
-@trip_bp.route('/fix-planned', methods=['GET'])
-def fix_planned():
-
-    db["trips"].update_many(
-        {"isPlanned": {"$exists": False}},
-        {"$set": {"isPlanned": False}}
-    )
-
-    return {
-        "success": True,
-        "message": "Planned field added to old trips"
-    }
-
+# 🔍 SEARCH TRIPS
 @trip_bp.route('/search-trips', methods=['GET'])
 def search_trips_route():
     query = request.args.get('q', '')
     response, status = search_trips(query)
     return jsonify(response), status
 
-# 📌 TOGGLE FUTURE TRIP
-@trip_bp.route('/toggle-planned/<id>', methods=['POST'])
-def toggle_planned(id):
 
-    try:
-        obj_id = ObjectId(id)
-    except:
-        return jsonify({
-            "success": False,
-            "message": "Invalid ID"
-        }), 400
+# 🔧 FIX MISSING IMAGES
+@trip_bp.route('/fix-images', methods=['GET'])
+def fix_images_route():
+    response, status = fix_images_data()
+    return jsonify(response), status
 
-    trip = db["trips"].find_one({"_id": obj_id})
 
-    if not trip:
-        return jsonify({
-            "success": False,
-            "message": "Trip not found"
-        }), 404
+# ❤️ FIX OLD FAVORITES FIELD
+@trip_bp.route('/fix-favorites', methods=['GET'])
+def fix_favorites_route():
+    response, status = fix_favorites_data()
+    return jsonify(response), status
 
-    current_value = trip.get("isPlanned", False)
 
-    db["trips"].update_one(
-        {"_id": obj_id},
-        {
-            "$set": {
-                "isPlanned": not current_value
-            }
-        }
-    )
+# 📌 FIX OLD PLANNED FIELD
+@trip_bp.route('/fix-planned', methods=['GET'])
+def fix_planned_route():
+    response, status = fix_planned_data()
+    return jsonify(response), status
 
-    return jsonify({
-        "success": True,
-        "message": "Planned status updated",
-        "isPlanned": not current_value
-    }), 200
+# 🌍 GET TRIPS BY CATEGORY
+@trip_bp.route('/get-category/<category_name>', methods=['GET'])
+def get_category_route(category_name):
+
+    response, status = get_trips_by_category(category_name)
+
+    return jsonify(response), status

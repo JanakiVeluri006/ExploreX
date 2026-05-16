@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_cors import CORS
 from routes.trip_routes import trip_bp
+from routes.journal_routes import journal_bp
 
 app = Flask(__name__)
 CORS(app)
 
 app.register_blueprint(trip_bp)
+app.register_blueprint(journal_bp)
 
 @app.route('/')
 def home():
