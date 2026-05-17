@@ -55,4 +55,25 @@ class JournalService {
       return [];
     }
   }
+
+    // 📚 Get all journals of user
+  static Future<List<dynamic>> getUserJournals() async {
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return [];
+      final response = await http.get(Uri.parse("$baseUrl/get-journals/${user.uid}"),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data["data"];
+      }
+      return [];
+    } catch (e) {
+      print("GET USER JOURNALS ERROR: $e");
+
+      return [];
+    }
+  }
 }

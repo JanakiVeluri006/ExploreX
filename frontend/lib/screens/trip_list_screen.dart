@@ -6,6 +6,7 @@ import 'trip_details_screen.dart';
 import 'add_trip_screen.dart';
 import '../theme/app_colors.dart';
 import '../services/auth/auth_service.dart';
+import 'profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class TripListPage extends StatefulWidget {
@@ -141,35 +142,71 @@ Widget buildCategoryChip(String label) {
                     ],
                   ),
 
-                  PopupMenuButton<String>(
-                    icon: const CircleAvatar(
-                      backgroundColor: Colors.white24,
-                      child: Icon(Icons.person, color: Colors.white),
-                    ),
-                    onSelected: (value) async {
-                      if (value == "logout") {
-                        await AuthService.logoutUser();
-                      }
-                    },
-                    itemBuilder: (context) {
-                      final user = FirebaseAuth.instance.currentUser;
-                      return [
-                        PopupMenuItem(
-                          enabled: false,
-                          child: Text(
-                            user?.email ?? "No Email",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      // 👤 PROFILE
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ProfileScreen(trips: trips),
                             ),
+                          );
+                        },
+                        icon: const CircleAvatar(
+                          backgroundColor: Colors.white24,
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
                           ),
                         ),
-                        const PopupMenuDivider(),
-                        const PopupMenuItem(
-                          value: "logout",
-                          child: Text("Logout"),
+                      ),
+
+                      // ⋮ MENU
+                      PopupMenuButton<String>(
+
+                        icon: const Icon(
+                          Icons.more_vert,
+                          color: Colors.white,
                         ),
-                      ];
-                    },
+
+                        onSelected: (value) async {
+
+                          if (value == "logout") {
+                            await AuthService.logoutUser();
+                          }
+                        },
+
+                        itemBuilder: (context) {
+
+                          final user = FirebaseAuth.instance.currentUser;
+
+                          return [
+
+                            PopupMenuItem(
+
+                              enabled: false,
+
+                              child: Text(
+                                user?.email ?? "No Email",
+
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+
+                            const PopupMenuDivider(),
+
+                            const PopupMenuItem(
+                              value: "logout",
+                              child: Text("Logout"),
+                            ),
+                          ];
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
