@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../services/journal_service.dart';
 class JournalDetailScreen extends StatelessWidget {
 
   final Map journal;
@@ -109,7 +109,6 @@ class JournalDetailScreen extends StatelessWidget {
                         // 📍 LOCATION
                         Row(
                           children: [
-
                             const Icon(
                               Icons.location_on,
                               color: Colors.deepPurple,
@@ -146,11 +145,7 @@ class JournalDetailScreen extends StatelessWidget {
 
                             Text(
                               journal["created_at"],
-
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 13,
-                              ),
+                              style: const TextStyle(color: Colors.grey, fontSize: 13),
                             ),
                           ],
                         ),
@@ -160,12 +155,7 @@ class JournalDetailScreen extends StatelessWidget {
                         // 📖 HEADING
                         const Text(
                           "Travel Memory ✨",
-
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2D1B69),
-                          ),
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF2D1B69)),
                         ),
 
                         const SizedBox(height: 16),
@@ -173,12 +163,7 @@ class JournalDetailScreen extends StatelessWidget {
                         // 📄 CONTENT
                         Text(
                           journal["content"],
-
-                          style: const TextStyle(
-                            fontSize: 17,
-                            height: 1.8,
-                            color: Colors.black87,
-                          ),
+                          style: const TextStyle(fontSize: 17, height: 1.8, color: Colors.black87),
                         ),
                       ],
                     ),
@@ -189,26 +174,145 @@ class JournalDetailScreen extends StatelessWidget {
                   // ✏️ ACTION BUTTONS
                   Row(
                     children: [
-
-                      SizedBox(
-                        width: 200,
+                      Expanded(
                         child: ElevatedButton.icon(
-
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepPurple,
                             foregroundColor: Colors.white,
-
                             padding: const EdgeInsets.symmetric(
                               vertical: 16,
                             ),
-
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
 
-                          onPressed: () {
-                            // TODO: Edit Journal
+                          onPressed: () async {
+                            final titleController = TextEditingController(
+                              text: journal["title"],
+                            );
+
+                            final contentController = TextEditingController(
+                              text: journal["content"],
+                            );
+
+                            final result = await showDialog<bool>(
+
+                              context: context,
+
+                              builder: (context) {
+
+                                return AlertDialog(
+
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+
+                                  title: const Text(
+                                    "Edit Journal ✏️",
+                                  ),
+
+                                  content: SingleChildScrollView(
+
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+
+                                      children: [
+
+                                        TextField(
+                                          controller: titleController,
+
+                                          decoration: InputDecoration(
+                                            labelText: "Title",
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 16),
+
+                                        TextField(
+
+                                          controller: contentController,
+
+                                          maxLines: 5,
+
+                                          decoration: InputDecoration(
+                                            labelText: "Memory",
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  actions: [
+
+                                    TextButton(
+
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+
+                                      child: const Text("Cancel"),
+                                    ),
+
+                                    ElevatedButton(
+
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.deepPurple,
+                                      ),
+
+                                      onPressed: () async {
+
+                                        final success =
+                                            await JournalService.updateJournal(
+
+                                          id: journal["_id"],
+
+                                          title: titleController.text.trim(),
+
+                                          content: contentController.text.trim(),
+                                        );
+
+                                        if (context.mounted) {
+
+                                          if (success) {
+
+                                            Navigator.pop(context, true);
+
+                                          } else {
+
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  "Failed to update journal",
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      },
+
+                                      child: const Text(
+                                        "Save",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                            if (result == true && context.mounted) {
+
+                              Navigator.pop(context, true);
+                            }
                           },
 
                           icon: const Icon(Icons.edit),
@@ -224,8 +328,7 @@ class JournalDetailScreen extends StatelessWidget {
 
                       const SizedBox(width: 16),
 
-                      SizedBox(
-                        width: 200,
+                      Expanded(
                         child: ElevatedButton.icon(
 
                           style: ElevatedButton.styleFrom(
@@ -237,12 +340,102 @@ class JournalDetailScreen extends StatelessWidget {
                             ),
 
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
 
-                          onPressed: () {
-                            // TODO: Delete Journal
+                          onPressed: () async {
+
+                            final confirmDelete =
+                                await showDialog<bool>(
+
+                              context: context,
+
+                              builder: (context) {
+
+                                return AlertDialog(
+
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+
+                                  title: const Text(
+                                    "Delete Journal?",
+                                  ),
+
+                                  content: const Text(
+                                    "This memory will be permanently removed.",
+                                  ),
+
+                                  actions: [
+
+                                    TextButton(
+
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+
+                                      child: const Text("Cancel"),
+                                    ),
+
+                                    ElevatedButton(
+
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.redAccent,
+                                      ),
+
+                                      onPressed: () {
+                                        Navigator.pop(context, true);
+                                      },
+
+                                      child: const Text(
+                                        "Delete",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                            if (confirmDelete == true) {
+
+                              final success =
+                                  await JournalService.deleteJournal(
+                                journal["_id"],
+                              );
+
+                              if (success) {
+
+                                if (context.mounted) {
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "Journal deleted successfully 🗑️",
+                                      ),
+                                    ),
+                                  );
+
+                                  Navigator.pop(context, true);
+                                }
+
+                              } else {
+
+                                if (context.mounted) {
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "Failed to delete journal",
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            }
                           },
 
                           icon: const Icon(Icons.delete),

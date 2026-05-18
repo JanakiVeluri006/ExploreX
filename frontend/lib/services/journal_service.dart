@@ -76,4 +76,72 @@ class JournalService {
       return [];
     }
   }
+
+// ✏️ Update Journal
+static Future<bool> updateJournal({
+
+  required String id,
+  required String title,
+  required String content,
+
+}) async {
+
+  try {
+
+    final response = await http.put(
+
+      Uri.parse("$baseUrl/update-journal"),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: jsonEncode({
+
+        "id": id,
+        "title": title,
+        "content": content,
+
+      }),
+    );
+
+    return response.statusCode == 200;
+
+  } catch (e) {
+
+    print("UPDATE JOURNAL ERROR: $e");
+
+    return false;
+  }
+}
+
+ // 🗑 Delete Journal
+static Future<bool> deleteJournal(
+  String id,
+) async {
+
+  try {
+
+    final response = await http.delete(
+
+      Uri.parse("$baseUrl/delete-journal"),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: jsonEncode({
+        "id": id,
+      }),
+    );
+
+    return response.statusCode == 200;
+
+  } catch (e) {
+
+    print("DELETE JOURNAL ERROR: $e");
+
+    return false;
+  }
+}
 }
