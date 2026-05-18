@@ -3,10 +3,6 @@ from bson import ObjectId
 from datetime import datetime
 from services.category_service import detect_category
 
-<<<<<<< HEAD
-=======
-# ➕ CREATE TRIP
->>>>>>> ac294aacf9a6a94ec24cc4fcc3b4354a449115d9
 def create_trip(data):
 
     title = data.get("title")
@@ -48,14 +44,7 @@ def create_trip(data):
         "id": str(result.inserted_id)
     }, 201
 
-<<<<<<< HEAD
 def get_all_trips(user_id):
-=======
-
-# 📥 GET ALL TRIPS
-def get_all_trips():
-
->>>>>>> ac294aacf9a6a94ec24cc4fcc3b4354a449115d9
     trips = []
     favorite_trip_ids = []
     favorites = db["favorites"].find({"user_id": user_id})
@@ -265,7 +254,6 @@ def search_trips(query):
         "data": results
     }, 200
 
-<<<<<<< HEAD
 def toggle_planned(id):
 
     try:
@@ -293,69 +281,10 @@ def toggle_planned(id):
                 "isPlanned": not current_value
             }
         }
-=======
-
-# 🔧 FIX OLD IMAGE FIELD
-def fix_images_data():
-
-    db["trips"].update_many(
-        {"image": {"$exists": False}},
-        {"$set": {"image": ""}}
->>>>>>> ac294aacf9a6a94ec24cc4fcc3b4354a449115d9
     )
 
     return {
         "success": True,
-<<<<<<< HEAD
         "message": "Planned status updated",
         "isPlanned": not current_value
-=======
-        "message": "Images fixed successfully"
-    }, 200
-
-
-# ❤️ FIX OLD FAVORITES FIELD
-def fix_favorites_data():
-
-    db["trips"].update_many(
-        {"isFavorite": {"$exists": False}},
-        {"$set": {"isFavorite": False}}
-    )
-
-    return {
-        "success": True,
-        "message": "Favorites fixed successfully"
-    }, 200
-
-
-# 📌 FIX OLD PLANNED FIELD
-def fix_planned_data():
-
-    db["trips"].update_many(
-        {"isPlanned": {"$exists": False}},
-        {"$set": {"isPlanned": False}}
-    )
-
-    return {
-        "success": True,
-        "message": "Planned trips fixed successfully"
-    }, 200
-# 🌍 GET TRIPS BY CATEGORY
-def get_trips_by_category(category_name):
-
-    trips = []
-
-    for trip in db["trips"].find({
-        "category": category_name
-    }):
-
-        trip["_id"] = str(trip["_id"])
-        trip["id"] = trip["_id"]
-
-        trips.append(trip)
-
-    return {
-        "success": True,
-        "data": trips
->>>>>>> ac294aacf9a6a94ec24cc4fcc3b4354a449115d9
     }, 200

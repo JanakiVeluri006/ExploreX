@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from controllers.journal_controller import (
     create_journal,
-    get_user_journals,
+    get_all_journals,
     get_trip_journals,
     update_journal,
     delete_journal
@@ -20,6 +20,12 @@ def create_journal_route():
 @journal_bp.route('/get-journals/<user_id>', methods=['GET'])
 def get_user_journals_route(user_id):
     response, status = get_user_journals(user_id)
+    return jsonify(response), status
+
+# Get all journals
+@journal_bp.route('/get-all-journals', methods=['GET'])
+def get_all_journals_route():
+    response, status = get_all_journals()
     return jsonify(response), status
 
 # Get journals for a specific trip

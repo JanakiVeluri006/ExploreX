@@ -122,3 +122,23 @@ def update_journal(data):
         "success": True,
         "message": "Journal updated successfully"
     }, 200
+
+# 📘 GET JOURNALS FOR A SPECIFIC TRIP
+def get_trip_journals(user_id, trip_id):
+
+    journals = []
+
+    for journal in db["journals"].find({
+        "trip_id": trip_id
+    }):
+
+        journal["_id"] = str(journal["_id"])
+        journal["id"] = journal["_id"]
+
+        journals.append(journal)
+
+    return {
+        "success": True,
+        "data": journals
+    }, 200
+
