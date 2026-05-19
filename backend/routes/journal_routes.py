@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+
 from controllers.journal_controller import (
     create_journal,
     get_all_journals,
@@ -9,6 +10,7 @@ from controllers.journal_controller import (
 
 journal_bp = Blueprint('journal_bp', __name__)
 
+
 # ➕ CREATE JOURNAL
 @journal_bp.route('/create-journal', methods=['POST'])
 def create_journal_route():
@@ -16,20 +18,26 @@ def create_journal_route():
     response, status = create_journal(data)
     return jsonify(response), status
 
-# 📥 GET ALL JOURNALS
-@journal_bp.route('/get-journals', methods=['GET'])
-def get_all_journals_route():
-    response, status = get_all_journals()
+
+# 📚 GET ALL JOURNALS OF USER
+@journal_bp.route('/get-journals/<user_id>', methods=['GET'])
+def get_all_journals_route(user_id):
+    response, status = get_all_journals(user_id)
     return jsonify(response), status
 
-# 📗 GET JOURNALS FOR A SPECIFIC TRIP
-@journal_bp.route('/get-trip-journals/<user_id>/<trip_id>', methods=['GET'])
+
+# 📖 GET JOURNALS OF SPECIFIC TRIP
+@journal_bp.route(
+    '/get-trip-journals/<user_id>/<trip_id>',
+    methods=['GET']
+)
 def get_trip_journals_route(user_id, trip_id):
     response, status = get_trip_journals(
         user_id,
         trip_id
     )
     return jsonify(response), status
+
 
 # ✏️ UPDATE JOURNAL
 @journal_bp.route('/update-journal', methods=['PUT'])
