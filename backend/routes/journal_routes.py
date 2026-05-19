@@ -16,19 +16,13 @@ def create_journal_route():
     response, status = create_journal(data)
     return jsonify(response), status
 
-# Get all journals for a user
-@journal_bp.route('/get-journals/<user_id>', methods=['GET'])
-def get_user_journals_route(user_id):
-    response, status = get_user_journals(user_id)
-    return jsonify(response), status
-
-# Get all journals
-@journal_bp.route('/get-all-journals', methods=['GET'])
+# 📥 GET ALL JOURNALS
+@journal_bp.route('/get-journals', methods=['GET'])
 def get_all_journals_route():
     response, status = get_all_journals()
     return jsonify(response), status
 
-# Get journals for a specific trip
+# 📗 GET JOURNALS FOR A SPECIFIC TRIP
 @journal_bp.route('/get-trip-journals/<user_id>/<trip_id>', methods=['GET'])
 def get_trip_journals_route(user_id, trip_id):
     response, status = get_trip_journals(
@@ -37,16 +31,16 @@ def get_trip_journals_route(user_id, trip_id):
     )
     return jsonify(response), status
 
-# 📝 UPDATE JOURNAL
+# ✏️ UPDATE JOURNAL
 @journal_bp.route('/update-journal', methods=['PUT'])
 def update_journal_route():
     data = request.get_json()
-    response, status_code = update_journal(data)
-    return jsonify(response), status_code
+    response, status = update_journal(data)
+    return jsonify(response), status
 
 # 🗑 DELETE JOURNAL
 @journal_bp.route('/delete-journal', methods=['DELETE'])
 def delete_journal_route():
     data = request.get_json()
-    response, status_code = delete_journal(data)
-    return jsonify(response), status_code
+    response, status = delete_journal(data)
+    return jsonify(response), status
